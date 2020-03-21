@@ -1,0 +1,15 @@
+.row {
+    transition:.75s;
+}
+
+.row:hover .img {
+    border-radius: 1%;
+}
+
+.img {
+    object-fit: cover;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    transition:.75s;
+}

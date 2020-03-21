@@ -1,0 +1,29 @@
+{
+  "general.submit" : "Submit",
+  "general.cancel" : "Cancel",
+
+  "err.invalidCredentials": "",
+  "err.duplicatedUsername": "",
+  "err.duplicatedEmail" : "",
+
+  "nav.home" : "Home",
+  "nav.events" : "Events",
+  "nav.login" : "Login",
+  "nav.logout" : "Logout",
+  "nav.register" : "Register",
+
+  "auth.register" : "Register",
+  "auth.login" : "Login",
+  "auth.email" : "Email",
+  "auth.username" : "Username",
+  "auth.password" : "Password",
+  "auth.passwordVerify" : "Repeat Password",
+  "auth.passwordMismatch" : "Passwords do not match",
+  "auth.mandatoryField" : "Mandatory field",
+  "auth.invalidCredential" : "Invalid Credentials",
+
+  "places.label" : "Name the place",
+  "places.showMap": "Show map",
+  "places.hideMap": "Hide map",
+  "places.address": "Address"
+}

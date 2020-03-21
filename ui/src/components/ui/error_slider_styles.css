@@ -1,0 +1,16 @@
+#message {
+    max-height: 0;
+    transition: max-height .75s ease-out;
+    overflow: hidden;
+    margin: 5px;
+    /*color: #D8000C;*/
+    /*background-color: #FFBABA;*/
+    /*border: 1px;*/
+    /*border-radius: 3px;*/
+    /*text-align: center;*/
+}
+
+#message.error {
+    max-height: 100px;
+    transition: max-height .75s ease-in;
+}

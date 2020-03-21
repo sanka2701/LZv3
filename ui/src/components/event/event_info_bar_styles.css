@@ -1,0 +1,24 @@
+.event-info-bar {
+    color: white;
+    background-color: #333333;
+    padding-top: 15px;
+    text-align:center;
+}
+
+.info-data {
+    /*text-align:center;*/
+    /*position: absolute;*/
+    /*left: 50%;*/
+    /*top: 50%;*/
+}
+
+button {
+    /*margin: 15px;*/
+    padding: 15px;
+    /*width: 100%;*/
+    /*height: 100%;*/
+}
+
+svg{
+    color: white;
+}

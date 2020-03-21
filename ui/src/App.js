@@ -1,47 +1,55 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
+import React, {Component} from 'react';
+import {Container} from 'reactstrap';
+import {connect} from 'react-redux';
+import {withRouter} from 'react-router-dom';
+import SiteNavigation from './containers/header/navbar';
+import {get} from "./actions/index";
+import {AUTH_USER, AUTH_ERROR} from './actions/types'
 import axios from 'axios';
-import './App.css';
+import ModalExample from "./containers/error/modal";
 
-const apiUrl = `http://localhost:8080`;
+import TopLogo from './components/header/logo/top_logo';
+import Notification from "./containers/app/notification";
 
 class App extends Component {
-  state = {
-    users: []
-  };
+	componentDidMount() {
 
-  async createUser() {
-    await axios.get(apiUrl + '/user-create');
-    this.loadUsers();
-  }
+		axios.interceptors.request.use(
+			config => {
+				const jwtToken = localStorage.getItem('token');
+				if (jwtToken) {
+					config.headers.Authorization = `Bearer ${jwtToken}`;
+				}
+				return config;
+			},
+			error => Promise.reject(error)
+		);
 
-  async loadUsers() {
-    const res = await axios.get(apiUrl + '/users');
-    this.setState({
-      users: res.data
-    });
-  }
+		if (localStorage.getItem('token')) {
+			console.log("Token found: ", localStorage.getItem('token'));
+			const request = {
+				endpoint: 'user',
+				params: {},
+				successAction: AUTH_USER,
+				failureAction: AUTH_ERROR
+			};
+			this.props.get(request);
+		}
+	}
 
-  componentDidMount() {
-    this.loadUsers();
-  }
-
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <button onClick={() => this.createUser()}>Create User</button>
-          <p>Users list:</p>
-          <ul>
-            {this.state.users.map(user => (
-              <li key={user._id}>id: {user._id}</li>
-            ))}
-          </ul>
-        </header>
-      </div>
-    );
-  }
+	render() {
+		return (
+			<div>
+				<TopLogo/>
+				<SiteNavigation/>
+					<Container>
+						<Notification/>
+						<ModalExample/>
+						{this.props.children}
+					</Container>
+			</div>
+		);
+	}
 }
 
-export default App;
+export default withRouter(connect(null, {get})(App));

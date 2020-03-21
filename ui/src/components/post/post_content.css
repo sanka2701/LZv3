@@ -1,0 +1,123 @@
+/*
+!!! NOTE !!!
+ this is intentionally global css so the nested content from ck editor can be formatted as well
+*/
+
+.__lz_ck_content__ {
+    /* Font */
+    font-family: sans-serif, Arial, Verdana, "Trebuchet MS";
+    font-size: 18px;
+    color: #333;
+    background-color: #fff;
+    padding: 1em 18px;
+
+    text-align: center;
+}
+
+.__lz_ck_content__ p {
+    text-align: left;
+}
+
+.__lz_ck_content__ blockquote
+{
+    text-align: left;
+    font-style: italic;
+    font-family: Georgia, Times, "Times New Roman", serif;
+    padding: 5px 10px;
+    border-style: solid;
+    border-color: #ccc;
+    border-width: 0;
+    border-left-width: 10px;
+    padding-left: 20px;
+    padding-right: 8px;
+    margin-left: 20px;
+}
+
+.__lz_ck_content__ a
+{
+    color: #0782C1;
+}
+
+.__lz_ck_content__ ol,ul,dl
+{
+    text-align: left;
+    *margin-right: 0px;
+    padding: 0 40px;
+}
+
+.__lz_ck_content__ h1,h2,h3,h4,h5,h6
+{
+    font-weight: normal;
+    line-height: 1.2;
+}
+
+/*todo: maybe unused*/
+.__lz_ck_content__ hr
+{
+    border: 0;
+    border-top: 1px solid #ccc;
+}
+
+.__lz_ck_content__ img.right
+{
+    border: 1px solid #ccc;
+    float: right;
+    margin-left: 15px;
+    padding: 5px;
+}
+
+.__lz_ck_content__ img.left
+{
+    border: 1px solid #ccc;
+    float: left;
+    margin-right: 15px;
+    padding: 5px;
+}
+
+/*todo: maybe unused*/
+.__lz_ck_content__ pre
+{
+    white-space: pre-wrap; /* CSS 2.1 */
+    word-wrap: break-word; /* IE7 */
+    -moz-tab-size: 4;
+    tab-size: 4;
+}
+
+.__lz_ck_content__ span[lang]
+{
+    font-style: italic;
+}
+
+.__lz_ck_content__ figure.easyimage.easyimage-side {
+    float: right;
+    max-width: 50%;
+}
+
+.__lz_ck_content__ figure.easyimage.easyimage-full  {
+
+    outline: solid 1px #ccc;
+    background: rgba(0,0,0,0.05);
+    padding: 10px;
+    margin: 0 auto;
+    /*margin: 10px 20px;*/
+    display: inline-block;
+}
+
+.__lz_ck_content__ figure > img
+{
+    max-width: 100%;
+}
+
+.__lz_ck_content__ figure > figcaption
+{
+    text-align: center;
+    display: block; /* For IE8 */
+}
+
+/*todo: maybe unused*/
+.__lz_ck_content__ a > img {
+    padding: 1px;
+    margin: 1px;
+    border: none;
+    outline: 1px solid #0782C1;
+}

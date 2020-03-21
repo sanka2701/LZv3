@@ -5,7 +5,8 @@ WORKDIR /usr/src/app
 # Install app dependencies
 COPY package*.json ./
 
-RUN npm install --silent
+#RUN npm install --silent
+RUN npm install
 # Copy app source code
 COPY . .
 
@@ -27,5 +28,5 @@ CMD ["npm", "start"]
 ## production environment
 #FROM nginx:1.16.0-alpine
 #COPY --from=build /app/build /usr/share/nginx/html
-#EXPOSE 3000
+#EXPOSE 80
 #CMD ["nginx", "-g", "daemon off;"]

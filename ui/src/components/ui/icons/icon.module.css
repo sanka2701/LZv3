@@ -1,0 +1,16 @@
+.icon {
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.light {
+    color: #999C9F;
+}
+
+.dark {
+    color: #343A40;
+}
+
+.icon:hover {
+    color: #343A40;
+}

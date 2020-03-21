@@ -1,0 +1,30 @@
+.full-width-image-1 {
+    background: url('./choc_cover.jpg') no-repeat center center;
+    background-size: cover;
+    text-align: center;
+    height: 140px;
+}
+
+.logo-wrapper {
+    display: inline-block;
+}
+
+.main-title .site-description {
+    color: rgba(255, 255, 255, 0.7);
+}
+.main-title:hover .site-description {
+    color: #fff;
+}
+
+.main-title .main-logo svg {
+    margin: 5px 0;
+    width: 100px;
+    height: 100px;
+}
+.main-title:hover .main-logo svg .red {
+    opacity: 1;
+    transition: 0.25s;
+}
+.main-title:hover .main-logo svg .red *{
+    fill: #e14d43;
+}

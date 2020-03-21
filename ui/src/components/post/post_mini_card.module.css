@@ -1,0 +1,57 @@
+.list-item {
+    position: relative;
+    width: 100%;
+    padding: 4px;
+    border-bottom: 1px solid #bfbfbf;
+    display: table;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.list-item:hover {
+    background-color: #E6E6E6;
+}
+
+.list-item .title {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.list-item:hover .title {
+    color: #5E76B1;
+}
+
+.list-item .img-wrapper {
+    position: relative;
+    float: left;
+}
+
+.list-item .img-wrapper .thumbnail {
+    width: 76px;
+    height: 76px;
+}
+
+.list-item .img-wrapper .date {
+    float: left;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    margin-top: -38px;
+    width: 76px;
+    height: 76px;
+    background: rgba(51, 51, 51, 0.5);
+    color: #fff;
+    transition: background-color 0.3s;
+}
+
+.list-item .date .day {
+    font-size: 200%;
+    line-height: 100%;
+    margin-top: 16px;
+}
+
+.list-item .date .month {
+    text-transform: uppercase;
+    line-height: 90%;
+}
