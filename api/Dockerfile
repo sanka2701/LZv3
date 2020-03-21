@@ -10,4 +10,8 @@ COPY . .
 
 #Expose port and start application
 EXPOSE 8080
-CMD [ "npm", "start" ]
+
+##DEV
+CMD [ "npm", "run", "dev" ]
+## PRODUCTION
+#CMD [ "npm", "start" ]
