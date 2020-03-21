@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const connectDb = require('./src/connection');
-const User = require('./src/User.model');
+const User = require('./src/models/User.model');
 const cors = require('cors');
 
 const PORT = 8080;
@@ -23,6 +23,7 @@ app.get('/user-create', async (req, res) => {
 
 app.listen(PORT, function() {
   console.log(`Listening on ${PORT}`);
+  console.log(`Database Url ${process.env.MONGO_URL}`);
 
   connectDb().then(() => {
     console.log('MongoDb connected');

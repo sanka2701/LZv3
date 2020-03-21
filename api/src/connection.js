@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 
-const User = require("./User.model");
+const User = require("./models/User.model");
 
-const connection = "mongodb://mongo:27017/liptov-zije";
+const databaseURL = process.env.MONGO_URL;
 
 const connectDb = () => {
-  return mongoose.connect(connection);
+  return mongoose.connect(databaseURL,  { useNewUrlParser: true });
 };
 
 module.exports = connectDb;

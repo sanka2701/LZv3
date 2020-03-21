@@ -1,4 +1,4 @@
-FROM node:8
+FROM node:11
 # Create app directory
 WORKDIR /usr/src/app
 # Install app dependencies
@@ -11,7 +11,4 @@ COPY . .
 #Expose port and start application
 EXPOSE 8080
 
-##DEV
-CMD [ "npm", "run", "dev" ]
-## PRODUCTION
-#CMD [ "npm", "start" ]
+CMD [ "npm", "start" ]

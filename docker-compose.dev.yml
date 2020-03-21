@@ -1,0 +1,22 @@
+version: '2'
+services:
+  base:
+    image: node:11
+    volumes:
+      - ./api:/usr/src/service/
+    working_dir: /usr/src/service/
+    environment:
+      - MONGO_URL=mongodb://host.docker.internal:27017/liptov-zije
+
+  dev:
+    extends:
+      service: base
+    ports:
+      - '8080:8080'
+      - '27017:27017'
+    command: npm run dev
+
+  install:
+    extends:
+      service: base
+    command: npm install
