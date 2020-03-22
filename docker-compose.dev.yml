@@ -1,5 +1,12 @@
 version: '2'
 services:
+  ui:
+    build: ui
+    ports:
+      - '3000:3000'
+    depends_on:
+      - dev
+
   base:
     image: node:11
     volumes:
@@ -7,6 +14,7 @@ services:
     working_dir: /usr/src/service/
     environment:
       - MONGO_URL=mongodb://host.docker.internal:27017/liptov-zije
+      - JWT_KEY=mykye1
 
   dev:
     extends:
@@ -14,6 +22,7 @@ services:
     ports:
       - '8080:8080'
       - '27017:27017'
+      - '56745:56745'
     command: npm run dev
 
   install:
