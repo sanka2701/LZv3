@@ -26,8 +26,11 @@ class TagDetail extends React.Component {
 
 	onDelete = () => {
 		// todo: confirm message
-		const { deleteTag, tag: { id } } = this.props;
-		deleteTag(id);
+		let result = window.confirm('You are about to delete this tag, Are you sure?');
+		if( result ) {
+			const {deleteTag, history, tag: {id}} = this.props;
+			deleteTag(id, () => history.push(`/tags`));
+		}
 	};
 
 	//todo: loading animation

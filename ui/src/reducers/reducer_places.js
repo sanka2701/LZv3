@@ -1,10 +1,15 @@
 import {
-  GET_PLACES_SUCCESS,
-  GET_PLACES_FAILURE,
-  GET_PLACES_REQUEST,
-  POST_PLACE_SUCCESS,
-  SET_PLACE_FILTER,
-  RESET_PLACE_FILTER, POST_PLACE_FAILURE, UPDATE_PLACE_FAILURE, UPDATE_PLACE_SUCCESS, INVALIDATE_PLACES
+    GET_PLACES_SUCCESS,
+    GET_PLACES_FAILURE,
+    GET_PLACES_REQUEST,
+    POST_PLACE_SUCCESS,
+    SET_PLACE_FILTER,
+    RESET_PLACE_FILTER,
+    POST_PLACE_FAILURE,
+    UPDATE_PLACE_FAILURE,
+    UPDATE_PLACE_SUCCESS,
+    INVALIDATE_PLACES,
+    DELETE_PLACES_FAILURE, DELETE_PLACES_SUCCESS
 } from "../actions/types";
 import { mapKeys, map } from 'lodash';
 import { LM_GPS_COORDS } from "../utils/constant";
@@ -25,56 +30,60 @@ const defaultState = {
 };
 
 export default function (state = defaultState, action) {
-    const { places } = action.payload ? action.payload : {places: []};
+    const { places } = action.payload || { places: [] };
 
     switch (action.type) {
-      case POST_PLACE_SUCCESS:
-				return produce(state, draftState => {
-          draftState.byId = Object.assign({}, state.byId, mapKeys(places, 'id')),
-          // it is important to keep order as event update/create is relying on having posted place at the last position
-          draftState.ids  = state.ids.concat(map(places, 'id')),
-          draftState.isLoading = false
-				});
+        case POST_PLACE_SUCCESS:
+		  	return produce(state, draftState => {
+                draftState.byId = Object.assign({}, state.byId, mapKeys(places, 'id')),
+                // it is important to keep order as event update/create is relying on having posted place at the last position
+                draftState.ids  = state.ids.concat(map(places, 'id')),
+                draftState.isLoading = false
+            });
 
-      case UPDATE_PLACE_SUCCESS:
-        return produce(state, draftState => {
-          draftState.byId = Object.assign({}, state.byId, mapKeys(places, 'id')),
-          draftState.ids  = state.ids.concat(map(places, 'id')),
-          draftState.isLoading = false
-        });
+        case UPDATE_PLACE_SUCCESS:
+             return produce(state, draftState => {
+                draftState.byId = Object.assign({}, state.byId, mapKeys(places, 'id')),
+                draftState.ids  = state.ids.concat(map(places, 'id')),
+                draftState.isLoading = false
+             });
+        case GET_PLACES_SUCCESS:
+          return produce(state, draftState => {
+              draftState.byId = mapKeys(places, 'id'),
+              draftState.ids = map(places, 'id'),
+              draftState.isLoading = false
+          });
+        case DELETE_PLACES_SUCCESS:
+            //todo: two options to do :
+            //  a) pass deleted id from backend and remove from store
+            //  b) do nothing and just reload all places after redirect to /places
 
-      case GET_PLACES_SUCCESS:
-        return produce(state, draftState => {
-          draftState.byId = mapKeys(places, 'id'),
-          draftState.ids = map(places, 'id'),
-          draftState.isLoading = false
-        });
+        case DELETE_PLACES_FAILURE:
+        case POST_PLACE_FAILURE:
+        case UPDATE_PLACE_FAILURE:
+        case GET_PLACES_FAILURE:
+            return {...state, isLoading: false};
 
-      case POST_PLACE_FAILURE:
-      case UPDATE_PLACE_FAILURE:
-      case GET_PLACES_FAILURE:
-        return {...state, isLoading: false};
+        case INVALIDATE_PLACES:
+            return {...state, didInvalidate: true};
 
-      case INVALIDATE_PLACES:
-        return {...state, didInvalidate: true};
+        case GET_PLACES_REQUEST:
+            return {...state, isLoading: true, didInvalidate: false};
 
-      case GET_PLACES_REQUEST:
-        return {...state, isLoading: true, didInvalidate: false};
+        case SET_PLACE_FILTER:
+            const { filter } = action.payload;
+            return {...state,
+                filter: {
+                    ...state.filter,
+                    ...filter,
+                    isSet: true,
+                }
+            };
 
-      case SET_PLACE_FILTER:
-        const { filter } = action.payload;
-        return {...state,
-          filter: {
-            ...state.filter,
-            ...filter,
-						isSet: true,
-          }
-        };
+        case RESET_PLACE_FILTER:
+            return {...state, filter: defaultFilter };
 
-      case RESET_PLACE_FILTER:
-        return {...state, filter: defaultFilter };
-
-      default:
-        return state;
+        default:
+            return state;
     }
 }

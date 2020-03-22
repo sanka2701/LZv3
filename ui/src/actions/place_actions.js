@@ -1,4 +1,4 @@
-import {get, post, remove} from './index';
+import {get, put, post, remove} from './index';
 import {
   GET_PLACES_FAILURE,
   GET_PLACES_SUCCESS,
@@ -19,21 +19,20 @@ import {change} from "redux-form";
 export const loadPlaceById = id => dispatch => {
   dispatch(requestPlaces());
     const request = {
-        endpoint: 'places/id',
-        params: { id },
+        endpoint: `places/${id}`,
         successAction: GET_PLACES_SUCCESS,
         failureAction: GET_PLACES_FAILURE
     };
     dispatch(get(request));
 };
 
-export const deletePlace = id => dispatch => {
+export const deletePlace = ( id, successCallback ) => dispatch => {
   dispatch(requestPlaces());
 	const request = {
-		endpoint: 'places',
+		endpoint: `places/${id}`,
 		successAction: DELETE_PLACES_SUCCESS,
 		failureAction: DELETE_PLACES_FAILURE,
-		params: {id}
+        successCallback
 	};
 	dispatch(remove(request));
 };
@@ -41,7 +40,7 @@ export const deletePlace = id => dispatch => {
 export const loadPlaces = () => dispatch => {
   dispatch(requestPlaces());
   const request = {
-    endpoint: 'places/list',
+    endpoint: `places`,
     successAction: GET_PLACES_SUCCESS,
     failureAction: GET_PLACES_FAILURE
   };
@@ -51,7 +50,7 @@ export const loadPlaces = () => dispatch => {
 export const postPlace = (place, successCallback) => async dispatch => {
   dispatch(requestPlaces());
     const request = {
-        endpoint: 'places',
+        endpoint: `places`,
         payload: place,
         successAction: POST_PLACE_SUCCESS,
         failureAction: POST_PLACE_FAILURE
@@ -69,10 +68,10 @@ export const postPlace = (place, successCallback) => async dispatch => {
     await dispatch(post(request));
 };
 
-export const updatePlace = async (place, successCallback) => async dispatch => {
+export const updatePlace = (place, successCallback) => async dispatch => {
   dispatch(requestPlaces());
   const request = {
-    endpoint: 'places/update',
+    endpoint: `places/${place.id}`,
     payload: place,
     successAction: UPDATE_PLACE_SUCCESS,
     failureAction: UPDATE_PLACE_FAILURE
@@ -88,7 +87,7 @@ export const updatePlace = async (place, successCallback) => async dispatch => {
     successCallback && successCallback();
   };
 
-  await dispatch(post(request));
+  await dispatch(put(request));
 };
 
 const shouldLoadPlaces = (placeId, {places}) => {

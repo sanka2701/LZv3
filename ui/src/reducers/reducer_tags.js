@@ -22,9 +22,9 @@ const defaultState = {
 };
 
 export default function (state = defaultState, action) {
-	const { tags } = action.payload ? action.payload : {tags: []};
+	const { tags } = action.payload || {tags: []};
 
-  switch(action.type) {
+  	switch(action.type) {
 		case POST_TAG_SUCCESS:
 			return produce(state, draftState => {
 				draftState.byId = Object.assign({}, state.byId, mapKeys(tags, 'id')),
@@ -39,7 +39,7 @@ export default function (state = defaultState, action) {
 				draftState.isLoading = false
 			});
 
-    case GET_TAGS_SUCCESS:
+		case GET_TAGS_SUCCESS:
 			return produce(state, draftState => {
 				draftState.byId = mapKeys(tags, 'id'),
 				draftState.ids = map(tags, 'id'),
@@ -48,14 +48,14 @@ export default function (state = defaultState, action) {
 
 		case UPDATE_TAG_FAILURE:
 		case POST_TAG_FAILURE:
-    case GET_TAGS_FAILURE:
-      return {...state, isLoading: false};
+		case GET_TAGS_FAILURE:
+      		return {...state, isLoading: false};
 
 		case INVALIDATE_TAGS:
 			return {...state, didInvalidate: true};
 
-    case GET_TAGS_REQUEST:
-      return {...state, isLoading: true, didInvalidate: false};
+		case GET_TAGS_REQUEST:
+			return {...state, isLoading: true, didInvalidate: false};
 
 		case SET_TAG_FILTER:
 			const { filter } = action.payload;
@@ -70,7 +70,7 @@ export default function (state = defaultState, action) {
 		case RESET_TAG_FILTER:
 			return {...state, filter: defaultFilter };
 
-    default:
-      return state;
+		default:
+		    return state;
   }
 }

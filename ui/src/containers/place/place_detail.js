@@ -17,14 +17,14 @@ class PlaceDetail extends React.Component {
   }
 
   onEdit = () => {
-  	const { place, history } = this.props;
+  	    const { place, history } = this.props;
 		history.push(`/places/edit/${place.id}`)
   };
 
   onDelete = () => {
 		// todo: confirm message
-  	const { deletePlace, place: { id } } = this.props;
-		deletePlace(id);
+  	    const { deletePlace, history, place: { id } } = this.props;
+		deletePlace(id, () => history.push(`/places`));
   };
 
   render() {

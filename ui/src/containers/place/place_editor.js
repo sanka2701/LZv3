@@ -26,13 +26,13 @@ class PlaceEditor extends React.Component{
   };
 
   onSubmit = ({place}) => {
-    const {postPlace, updatePlace} = this.props;
+    const {postPlace, updatePlace, history} = this.props;
     const successCallback = () => {
-      this.props.history.push(`/places/`)
+        history.push(`/places/`)
     };
 
     place.id
-      ? updatePlace(place, successCallback)
+        ? updatePlace(place, successCallback)
   		: postPlace(place, successCallback);
   };
 

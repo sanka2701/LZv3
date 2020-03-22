@@ -14,7 +14,7 @@ class PhotoManage extends React.Component {
 
     onSubmit = (photo) => {
         const successCallback = () => {
-            this.props.history.push('/events/')
+            this.props.history.push('/potw/')
         };
 
         photo.id

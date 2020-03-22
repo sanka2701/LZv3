@@ -1,7 +1,9 @@
 const express = require('express');
 const User = require('../models/User.model');
 const router = express.Router();
-const auth = require('../middleware/auth');
+const authe = require('../middleware/authentication');
+const autho = require('../middleware/authorization');
+const {ROLES} = require('../utils/constants');
 
 router.post('/users', async (req, res) => {
     // Create a new user
@@ -33,13 +35,15 @@ router.post('/users/login', async(req, res) => {
 
 router.get('/users', async (req, res) => {
     const users = await User.find();
-
     res.json(users);
 });
 
-router.get('/user', auth, async(req, res) => {
-    // View logged in user profile
-    res.send(req.user)
+router.get('/users/me', authe, autho(ROLES.USER), async(req, res) => {
+    const {user, token} = req;
+    res.send({ user, token })
 });
+
+// todo: get by id
+// todo: update
 
 module.exports = router;

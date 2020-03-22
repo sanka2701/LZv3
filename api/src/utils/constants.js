@@ -1,7 +1,10 @@
 const constants = {
-    ROLE_ADMIN:  'ROLE_ADMIN',
-    ROLE_USER:  'ROLE_USER',
-    ROLE_TRUSTED_USER:  'ROLE_TRUSTED_USER',
+    ROLES: {
+        // NOTE !!! ORDER MATTERS !!! the most powerful role must be as last
+        USER:  'ROLE_USER',
+        TRUSTED_USER:  'ROLE_TRUSTED_USER',
+        ADMIN:  'ROLE_ADMIN',
+    }
 };
 
 module.exports = constants;

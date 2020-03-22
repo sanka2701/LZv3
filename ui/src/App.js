@@ -26,9 +26,10 @@ class App extends Component {
 		);
 
 		if (localStorage.getItem('token')) {
+			// todo: move to user actions
 			console.log("Token found: ", localStorage.getItem('token'));
 			const request = {
-				endpoint: 'user',
+				endpoint: 'users/me',
 				params: {},
 				successAction: AUTH_USER,
 				failureAction: AUTH_ERROR

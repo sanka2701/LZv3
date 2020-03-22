@@ -93,10 +93,30 @@ export const post = (request) => async dispatch => {
         })
 };
 
+export const put = (request) => async dispatch => {
+    const {endpoint, payload, successAction, failureAction, params, successCallback} = request;
+    await axios.put(`${ROOT_URL}/${endpoint}`, payload, {params})
+        .then( response => {
+            successCallback && successCallback();
+            dispatch({
+                type: successAction,
+                payload: response.data
+            })
+        })
+        .catch(err => {
+            debugger;
+            dispatch({
+                type: failureAction,
+                payload: err.response.data
+            })
+        })
+};
+
 export const remove = (request) => async dispatch => {
-	const {endpoint, successAction, failureAction, params} = request;
+	const {endpoint, successAction, failureAction, params, successCallback} = request;
 	axios.delete(`${ROOT_URL}/${endpoint}`, {params})
 		.then( response => {
+            successCallback && successCallback();
 			dispatch({
 				type: successAction,
 				payload: response.data
