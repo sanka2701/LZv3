@@ -1,4 +1,4 @@
-import { post, get } from './index';
+import { post, get, put, remove } from './index';
 import {
 	GET_EVENTS_REQUEST,
 	CHANGE_EVENT_PAGE,
@@ -15,7 +15,7 @@ import {postToFormData} from "../utils/helpers";
 export const postEvent = ( event, successCallback ) => async (dispatch) => {
 	dispatch(requestEvents());
 	const request = {
-		endpoint: 'events',
+		endpoint: `events`,
 		payload: await postToFormData(event, 'event'),
 		successAction: POST_EVENT_SUCCESS,
 		failureAction: POST_EVENT_FAILURE,
@@ -37,7 +37,7 @@ export const postEvent = ( event, successCallback ) => async (dispatch) => {
 export const updateEvent = (event, successCallback) => async dispatch => {
 	dispatch(requestEvents());
 	const request = {
-		endpoint: 'events/update',
+		endpoint: `events/${event.id}`,
 		payload: await postToFormData(event, 'event'),
 		successAction: UPDATE_EVENT_SUCCESS,
 		failureAction: UPDATE_EVENT_FAILURE,
@@ -53,33 +53,13 @@ export const updateEvent = (event, successCallback) => async dispatch => {
 		}
 	};
 
-	dispatch(post(request));
-};
-
-export const setEventPagination = (pageIndex) => {
-    return {
-        type: CHANGE_EVENT_PAGE,
-        payload: {pageIndex}
-    }
-};
-
-export const invalidateEvents = () => {
-	return {
-		type: INVALIDATE_EVENTS
-	}
-};
-
-export const requestEvents = () => {
-    return {
-        type: GET_EVENTS_REQUEST
-    }
+	dispatch(put(request));
 };
 
 export const loadEventById = id => dispatch => {
     dispatch(requestEvents());
     const request = {
-        endpoint: 'events',
-        params: { id },
+        endpoint: `events/${id}`,
         successAction: GET_EVENTS_SUCCESS,
         failureAction: GET_EVENTS_FAILURE
     };
@@ -90,8 +70,7 @@ export const loadEventById = id => dispatch => {
 const loadEvents = () => dispatch => {
     dispatch(requestEvents());
     const request = {
-        endpoint: 'events/all',
-        params: {},
+        endpoint: `events`,
         successAction: GET_EVENTS_SUCCESS,
         failureAction: GET_EVENTS_FAILURE
     };
@@ -124,4 +103,23 @@ export const resetEventFilter = () => dispatch => {
 	dispatch({
 		type: RESET_EVENT_FILTER,
 	})
+};
+
+export const setEventPagination = (pageIndex) => {
+	return {
+		type: CHANGE_EVENT_PAGE,
+		payload: {pageIndex}
+	}
+};
+
+export const invalidateEvents = () => {
+	return {
+		type: INVALIDATE_EVENTS
+	}
+};
+
+export const requestEvents = () => {
+	return {
+		type: GET_EVENTS_REQUEST
+	}
 };

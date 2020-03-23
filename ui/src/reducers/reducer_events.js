@@ -48,7 +48,7 @@ const normalizeEventObject = event => {
 };
 
 export default function (state = defaultState, action) {
-	const { events } = action.payload ? action.payload : {events: []};
+	const { events } = action.payload || {events: []};
 	map(events, normalizeEventObject);
 
 	switch (action.type) {

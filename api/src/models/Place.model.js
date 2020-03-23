@@ -31,6 +31,8 @@ const placeSchema = new mongoose.Schema({
     }
 });
 
+//todo: prevention of deletion if its used in event
+
 placeSchema.virtual('lon')
     .get(function() { return this.longitude })
     .set(function(lon) { this.longitude = lon });
@@ -44,7 +46,7 @@ placeSchema.virtual('id')
 
 placeSchema.set('toJSON', {
     virtuals: true,
-    transform: function (doc, ret) {
+    transform: (doc, ret) => {
         delete ret.longitude;
         delete ret.latitude;
         delete ret._id;

@@ -29,6 +29,7 @@ services:
       - ./api:/usr/src/service/
     working_dir: /usr/src/service/
     environment:
+      - PORT=8080
       - UPLOADS_DIR=/usr/uploads
       - MONGO_URL=mongodb://host.docker.internal:27017/liptov-zije
       - JWT_KEY=mykye1

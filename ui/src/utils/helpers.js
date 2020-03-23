@@ -22,11 +22,8 @@ export const postToFormData = async ({ thumbnail, ...post }, type) => {
 	const files = await processor.getContentFiles(post.content);
 
 	const formData = new FormData();
-	formData.append(type, JSON.stringify(post));
-	forEach(files, ( file, url ) => {
-		formData.append('fileUrls', url);
-		formData.append('files', file);
-	});
+	forEach(post, (value, key) => formData.append(key, value));
+	forEach(files, ( file, url ) => formData.append(url, file));
 	thumbnail instanceof File
 		? formData.append('thumbnail', thumbnail)
 		: post.thumbnail = thumbnail;

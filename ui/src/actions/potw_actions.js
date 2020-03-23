@@ -12,12 +12,13 @@ import {
 } from "./types";
 
 const toFormData = async ({ photoUrl, ...weeklyPhoto }) => {
+    const { title, description } = weeklyPhoto;
     const formData = new FormData();
 
-    formData.append('json', JSON.stringify(weeklyPhoto));
+    formData.append('title', title);
+    formData.append('description', description);
     photoUrl instanceof File
-        ? formData.append('file', photoUrl)
-        : weeklyPhoto.thumbnail = photoUrl;
+        && formData.append('file', photoUrl);
 
     return formData;
 };
@@ -57,17 +58,10 @@ export const deletePhoto = ( id, callback ) => async dispatch => {
     dispatch(remove(request));
 };
 
-export const requestPhotos = () => {
-    return {
-        type: GET_PHOTOS_REQUEST
-    }
-};
-
 export const loadPhotoById = id => dispatch => {
     dispatch(requestPhotos());
     const request = {
-        endpoint: 'potw',
-        params: { id },
+        endpoint: `potw/${id}`,
         successAction: GET_PHOTOS_SUCCESS,
         failureAction: GET_PHOTOS_FAILURE
     };
@@ -77,9 +71,15 @@ export const loadPhotoById = id => dispatch => {
 export const loadAllPhotos  = () => dispatch => {
     dispatch(requestPhotos());
     const request = {
-        endpoint: 'potw/list',
+        endpoint: `potw`,
         successAction: GET_PHOTOS_SUCCESS,
         failureAction: GET_PHOTOS_FAILURE
     };
     dispatch(get(request));
+};
+
+export const requestPhotos = () => {
+    return {
+        type: GET_PHOTOS_REQUEST
+    }
 };
