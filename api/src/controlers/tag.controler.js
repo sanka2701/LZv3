@@ -1,48 +1,45 @@
-const express = require('express');
 const Tag = require('../models/Tag.model');
+const RequestProcessingError = require('../error/definition');
 
-const router = express.Router();
-
-router.post('/tags', async (req, res) => {
-    try {
-        const tag = new Tag(req.body);
-        await tag.save();
-        res.status(201).send({ tags: [tag] })
-    } catch (error) {
-        res.status(400).send(error)
-    }
-});
-
-router.put('/tags/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const tag = await Tag.findOneAndUpdate({_id: id}, req.body, {new: true});
-        res.status(201).send({ tags: [tag] });
-    } catch (error) {
-        res.status(400).send(error)
-    }
-});
-
-router.get('/tags', async (req, res) => {
-    const tags = await Tag.find();
-    res.json({ tags });
-});
-
-router.get('/tags/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const tag = await Tag.findOne({_id: id});
-        res.status(201).send({ tags: [tag] });
-    } catch (error) {
-        res.status(500).send(error)
-    }
-});
-
-router.delete('/tags/:id', (req, res) => {
-    const { id } = req.params;
-    Tag.findOneAndDelete({ _id : id }).then(() => {
-        res.status(200).send();
+const getRequestData = ( request ) => {
+    return new Promise(( resolve, reject) => {
+        resolve ({
+            id: request.params.id,
+            ...request.body
+        })
     })
-});
+};
 
-module.exports = router;
+const fetchTag = ({ id }) => {
+    return new Promise( (resolve, reject) => {
+        Tag.findById( id )
+            .orFail(() => {
+                reject(new RequestProcessingError(`Tag with id ${id} does not exists`, 404))
+            })
+            .exec((error, event ) => {
+                !!error
+                    ? reject(new RequestProcessingError(error.message, 400))
+                    : resolve(event)
+            })
+    })
+};
+
+const fetchAllTags = () => {
+    return Tag.find()
+};
+
+const updateTag = (  updateData ) => {
+    return Tag.findOneAndUpdate({_id: updateData.id}, updateData, {new: true});
+};
+
+const saveTag = ( data ) => {
+    return Tag.create( data )
+};
+
+const deleteTag= ( tag ) => {
+    return tag.remove()
+};
+
+module.exports = {
+    getRequestData, fetchTag, fetchAllTags, updateTag, saveTag, deleteTag
+};

@@ -8,9 +8,12 @@ import {
 	POST_EVENT_SUCCESS,
 	POST_EVENT_FAILURE,
 	UPDATE_EVENT_SUCCESS,
-	UPDATE_EVENT_FAILURE, INVALIDATE_EVENTS
+	UPDATE_EVENT_FAILURE,
+	INVALIDATE_EVENTS,
+	DELETE_EVENT_SUCCESS,
+	DELETE_EVENT_FAILURE
 } from '../actions/types';
-import {map, mapKeys, assign, union} from 'lodash';
+import {map, mapKeys, assign, union, difference, omit} from 'lodash';
 import {millisecondsToTime, replaceServerUrlPlaceholder} from "../utils/helpers";
 import produce from "immer";
 
@@ -72,6 +75,15 @@ export default function (state = defaultState, action) {
 				draftState.isLoading= false;
 			});
 
+		case DELETE_EVENT_SUCCESS:
+			return produce(state, draftState => {
+				let ids = map(events, 'id');
+				draftState.byId = omit(draftState.byId, ids);
+				draftState.ids  = difference(draftState.ids, ids);
+				draftState.isLoading= false;
+			});
+
+		case DELETE_EVENT_FAILURE:
 		case GET_EVENTS_FAILURE:
 		case UPDATE_EVENT_FAILURE:
 		case POST_EVENT_FAILURE:

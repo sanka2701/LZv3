@@ -62,7 +62,9 @@ export const filteredEventsSelector = createSelector(
 );
 
 export const currentPageEventsSelector = createSelector(
-	[filteredEventsSelector, getCurrentPage],
+	[makeEventsSelectorByApproval(true), getCurrentPage],
+	// fixme: filtering is not working
+	// [filteredEventsSelector, getCurrentPage],
 	(approvedEvents, currentPage) => {
 		const arr = chunk(approvedEvents, POSTS_PER_PAGE);
 		return arr[currentPage - 1]

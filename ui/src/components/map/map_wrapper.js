@@ -41,7 +41,6 @@ const MapWrapper = ({
     <div style={{height, width}}>
       <GoogleMap
         center={areCoordinatesValid(center) ? {lng: center.lon, lat: center.lat} : LM_GPS_COORDS}
-        googleMaps={window.google.maps}
         gestureHandling={'cooperative'}
         circles={getCircles(circles)}
         markers={getMarkers(markers)}

@@ -1,12 +1,7 @@
-const express = require('express');
 const crypto = require("crypto");
 const formidable = require('formidable');
-const authe = require('../middleware/authentication');
-const autho = require('../middleware/authorization');
 const Potw = require('../models/Potw.model');
-const {ROLES} = require('../utils/constants');
-
-const router = express.Router();
+const RequestProcessingError = require('../error/definition');
 
 const processIncomingForm = (request) => {
     return new Promise((resolve, reject) => {
@@ -21,86 +16,60 @@ const processIncomingForm = (request) => {
                 file.name = `${hashName}.${extension}`;
                 file.path = `${process.env.UPLOADS_DIR}/${file.name}`;
             })
-            .on('file', (name, file) => {
-                formData.filePath = file.path;
-                formData.fileName = file.name;
+            .on('file', (key, {path, name}) => {
+                formData.thumbnailFile = {path, name}
             })
             .on('error', (error) => {
                 reject(error)
             })
             .on('end', () => {
-                resolve(formData)
+                resolve({
+                    id: request.params.id,
+                    ownerId: request.user.id,
+                    ...formData
+                })
             });
     });
 };
 
-router.post('/potw', authe, autho(ROLES.ADMIN), (request, response) => {
-    processIncomingForm(request)
-        .then((formData) => {
-            let payload = { ...formData, ownerId: request.user.id };
-            Potw.create( payload )
-                .then((potw) => {
-                    response.status(201).send({ photos: [potw] });
-                })
-                .catch((error) => {
-                    //todo: delete just uploaded file
-                    response.status(400).send({ error });
-                });
-        })
-        .catch((error) => {
-            response.status(500).send({error});
-        })
-});
+/**
+ * Returns either searched Document during GET operation or searched document and data representing
+ * the update upon this Document. It is so to enable chaining this function in both search and update process.
+ */
+const fetchPhoto = (updateData) => {
+    return new Promise( (resolve, reject) => {
+        Potw.findById( updateData.id )
+            .populate('thumbnailFile')
+            .orFail(() => {
+                let error = new RequestProcessingError(`Photo with id ${updateData.id} does not exists`, 404);
+                reject(error);
+            })
+            .exec((error, photo ) => {
+                !!error
+                    ? reject(new RequestProcessingError(error.message, 400))
+                    : resolve({ photo, updateData })
+            })
+    });
+};
 
-router.put('/potw/:id', authe, autho(ROLES.ADMIN), async (request, response) => {
-    processIncomingForm(request)
-        .then((formData) => {
-            const { id } = request.params;
-            let payload = { ...formData, ownerId: request.user.id };
-            Potw.findOne( {_id: id}, payload, {new: true} )
-                .then((potw) => {
-                    Object.assign(potw, formData);
-                    potw.save()
-                        .then(updated => {
-                            response.status(201).send({ photos: [updated] })
-                        })
-                })
-                .catch((error) => {
-                    //todo: delete just uploaded file
-                    response.status(400).send({ error });
-                });
-        })
-        .catch((error) => {
-            response.status(500).send({error});
-        });
-});
+const fetchAllPhotos = () => {
+    return Potw.find()
+        .populate('thumbnailFile')
+};
 
-router.get('/potw', (request, response) => {
-    Potw.find()
-        .exec()
-        .then( photos => {
-            response.status(200).send({ photos });
-        })
-        .catch( error => {
-            response.status(400).send({error});
-        });
-});
+const updatePhoto = ({photo, updateData}) => {
+    Object.assign(photo, updateData);
+    return photo
+};
 
-router.get('/potw/:id', async (request, response) => {
-    const { id } = request.params;
-    Potw.findOne({ _id: id })
-        .orFail(() => {
-            throw new Error (`Photo with id ${id} does not exists`);
-        })
-        .exec()
-        .then( photo => {
-            response.status(200).send({ photos : [ photo ] });
-        })
-        .catch( error => {
-            response.status(400).send(error);
-        });
-});
+const savePhoto = (data) => {
+    return Potw.create( data )
+};
 
-//todo: delete
+const deletePhoto= ({ photo }) => {
+    return photo.remove()
+};
 
-module.exports = router;
+module.exports = {
+    savePhoto, deletePhoto, updatePhoto, fetchPhoto, fetchAllPhotos, processIncomingForm
+};

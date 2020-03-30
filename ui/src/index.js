@@ -2,8 +2,10 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import ReactDOM from 'react-dom';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
+
 import PrivateRoute from './containers/app/private_route';
 
+import apllyInterceptors from './services/interceptors';
 import store from './services/store';
 import ConnectedIntlProvider from './containers/connected_intl_provider';
 
@@ -40,6 +42,7 @@ import 'moment/locale/sk';
 import 'moment/locale/pl';
 import 'moment/locale/en-gb';
 moment.locale('sk');
+apllyInterceptors();
 
 ReactDOM.render(
     <Provider store={store}>

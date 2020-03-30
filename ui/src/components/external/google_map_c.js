@@ -17,25 +17,38 @@ class GoogleMap extends React.Component {
   constructor() {
     super();
     this.state = {
+      googleMaps: null,
       map: null,
       markerCache: new Map(),
       areaCache: new Map()
     }
   }
 
-  componentDidMount() {
-    const {circles, markers, googleMaps, onLoaded, ...mapProps} = this.props;
+  setUp() {
+    const {circles, markers, onLoaded, ...mapProps} = this.props;
+    const googleMaps = window.google.maps;
+    this.setState({ googleMaps });
 
     const map = new googleMaps.Map(this.ref_map, {
       ...mapProps,
     });
-
     this.setState({map}, () => {
       this.update(circles, markers);
     });
 
     if (onLoaded) {
       onLoaded(googleMaps, map)
+    }
+  }
+
+  componentDidMount() {
+    if (window.google) {
+      this.setUp();
+    } else {
+      const googleScript = document.getElementById('googleMapLoader');
+      googleScript.addEventListener('load', function () {
+        this.setUp();
+      }.bind(this))
     }
   }
 
@@ -145,8 +158,7 @@ class GoogleMap extends React.Component {
   }
 
   addItem(item, type) {
-    const {map} = this.state;
-    const {googleMaps} = this.props;
+    const {map, googleMaps} = this.state;
     const {onLoaded, ...itemProps} = item;
 
     const added = new googleMaps[type]({
@@ -216,7 +228,6 @@ GoogleMap.propTypes = {
       onLoaded: PropTypes.func,
     })
   ),
-  googleMaps: PropTypes.object.isRequired,
   onLoaded: PropTypes.func,
 };
 

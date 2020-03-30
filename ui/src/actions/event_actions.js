@@ -1,4 +1,4 @@
-import { post, get, put, remove } from './index';
+import {post, get, put, remove, requestTags} from './index';
 import {
 	GET_EVENTS_REQUEST,
 	CHANGE_EVENT_PAGE,
@@ -8,7 +8,12 @@ import {
 	POST_EVENT_FAILURE,
 	SET_EVENT_FILTER,
 	RESET_EVENT_FILTER,
-	SET_NOTIFICATION, UPDATE_EVENT_SUCCESS, UPDATE_EVENT_FAILURE, INVALIDATE_EVENTS
+	SET_NOTIFICATION,
+	UPDATE_EVENT_SUCCESS,
+	UPDATE_EVENT_FAILURE,
+	INVALIDATE_EVENTS,
+	DELETE_EVENT_SUCCESS,
+	DELETE_EVENT_FAILURE
 } from "./types";
 import {postToFormData} from "../utils/helpers";
 
@@ -54,6 +59,17 @@ export const updateEvent = (event, successCallback) => async dispatch => {
 	};
 
 	dispatch(put(request));
+};
+
+export const deleteEvent = ( id, successCallback ) => async dispatch => {
+	dispatch(requestEvents());
+	const request = {
+		endpoint: `events/${id}`,
+		successAction: DELETE_EVENT_SUCCESS,
+		failureAction: DELETE_EVENT_FAILURE,
+		successCallback
+	};
+	dispatch(remove(request));
 };
 
 export const loadEventById = id => dispatch => {

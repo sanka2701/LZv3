@@ -12,7 +12,10 @@ import { LOCALE_CHANGED } from '../actions/types';
 addLocaleData([...enLocaleData, ...skLocaleData, ...plLocaleData]);
 
 const createStoreWithMiddleware = applyMiddleware(reduxThunk)(createStore);
-const store = createStoreWithMiddleware(reducers);
+const store = createStoreWithMiddleware(
+    reducers,
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+);
 
 store.dispatch({type: LOCALE_CHANGED, payload: 'sk'});
 

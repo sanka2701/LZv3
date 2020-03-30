@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
+const Event = require('./Event.model');
+const RequestProcessingError = require('../error/definition');
 
-const placeSchema = new mongoose.Schema({
+const PlaceSchema = new mongoose.Schema({
     label: {
         type: String,
         required: true
@@ -31,20 +33,30 @@ const placeSchema = new mongoose.Schema({
     }
 });
 
-//todo: prevention of deletion if its used in event
+PlaceSchema.pre('remove', function (next) {
+    var { id } = this;
+    Event.find( { tags: mongoose.Types.ObjectId(id) }, (error, events) => {
+        if(events && events.length) {
+            let error = new RequestProcessingError(`Tag can't be deleted. It is referenced in Events ${events.map(e => e.id)}`, 400 );
+            next(error);
+        } else {
+            next()
+        }
+    });
+});
 
-placeSchema.virtual('lon')
+PlaceSchema.virtual('lon')
     .get(function() { return this.longitude })
     .set(function(lon) { this.longitude = lon });
 
-placeSchema.virtual('lat')
+PlaceSchema.virtual('lat')
     .get(function() { return this.latitude })
     .set(function(lat) { this.latitude = lat });
 
-placeSchema.virtual('id')
+PlaceSchema.virtual('id')
     .get(function() { return this._id });
 
-placeSchema.set('toJSON', {
+PlaceSchema.set('toJSON', {
     virtuals: true,
     transform: (doc, ret) => {
         delete ret.longitude;
@@ -54,6 +66,6 @@ placeSchema.set('toJSON', {
     }
 });
 
-const Place = mongoose.model("Place", placeSchema);
+const Place = mongoose.model("Place", PlaceSchema);
 
 module.exports = Place;

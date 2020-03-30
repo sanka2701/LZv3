@@ -49,8 +49,7 @@ export const selectGooglePOI = (placeid) => async dispatch => {
         };
 
         dispatch(change('create_event', 'place', domainPlace))
-    })
-    .catch(err => {
+    }, error => {
         //todo: do some error handling
         debugger;
     })
@@ -64,12 +63,11 @@ export const get = (request) => async dispatch => {
                 type: successAction,
                 payload: response.data
             })
-        })
-        .catch(err => {
+        }, err => {
           debugger;
             dispatch({
                 type: failureAction,
-                payload: err.response.data
+                payload: err//.response.data
             })
         })
 };
@@ -83,12 +81,11 @@ export const post = (request) => async dispatch => {
                 type: successAction,
                 payload: response.data
             })
-        })
-        .catch(err => {
+        }, err => {
             debugger;
             dispatch({
                 type: failureAction,
-                payload: err.response.data
+                payload: err//.response.data
             })
         })
 };
@@ -102,12 +99,11 @@ export const put = (request) => async dispatch => {
                 type: successAction,
                 payload: response.data
             })
-        })
-        .catch(err => {
+        }, err => {
             debugger;
             dispatch({
                 type: failureAction,
-                payload: err.response.data
+                payload: err//.response.data
             })
         })
 };
@@ -121,8 +117,7 @@ export const remove = (request) => async dispatch => {
 				type: successAction,
 				payload: response.data
 			})
-		})
-		.catch(err => {
+		}, err => {
 			debugger;
 			dispatch({
 				type: failureAction,

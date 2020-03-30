@@ -3,7 +3,7 @@ const fs = require('fs');
 
 const {SERVER_URL_PLACEHOLDER} = require('../utils/constants');
 
-const potwSchema = new mongoose.Schema({
+const PotwSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true
@@ -13,19 +13,17 @@ const potwSchema = new mongoose.Schema({
         required: true
     },
     ownerId: {
-        type: String,
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
         required: true
     },
-    fileName: {
-        type: String,
-        required: true
-    },
-    filePath: {
-        type: String,
+    thumbnailFile: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'File',
         required: true,
-        set: function (filePath) {
-            this._previousFilePath = this.filePath;
-            return filePath;
+        set: function (file) {
+            this._previousFile = this.thumbnailFile;
+            return file;
         }
     },
     createdAt: {
@@ -39,28 +37,27 @@ const potwSchema = new mongoose.Schema({
  * During 'update' this refers to Query and not a document itelf so previous value
  * of a path is not available
  **/
-potwSchema.pre("save", function(next) {
+PotwSchema.pre("save", function(next) {
     let document = this;
-    if (document._previousFilePath && document.isModified('filePath')) {
-        fs.unlink(document._previousFilePath, (error) => {
-            error
-                ? console.error(`Failed to delete file ${document.filePath}`)
-                : console.log(`Deleted file ${document.filePath}`);
-        })
+    if (document._previousFile && document.isModified('thumbnailFile')) {
+        document._previousFile.remove()
     }
     next();
 });
 
-potwSchema.virtual('previousPath')
-    .set(function(lon) { this.longitude = lon });
+PotwSchema.pre("remove", function(next) {
+    let document = this;
+    document.thumbnailFile.remove();
+    next();
+});
 
-potwSchema.virtual('photoUrl')
-    .get(function() { return `${SERVER_URL_PLACEHOLDER}/${this.fileName}` });
+PotwSchema.virtual('photoUrl')
+    .get(function() { return `${SERVER_URL_PLACEHOLDER}/${this.thumbnailFile.name}` });
 
-potwSchema.virtual('id')
+PotwSchema.virtual('id')
     .get(function() { return this._id });
 
-potwSchema.set('toJSON', {
+PotwSchema.set('toJSON', {
     virtuals: true,
     transform: (doc, ret) => {
         delete ret._id;
@@ -68,6 +65,6 @@ potwSchema.set('toJSON', {
     }
 });
 
-const Potw = mongoose.model("Potw", potwSchema);
+const Potw = mongoose.model("Potw", PotwSchema);
 
 module.exports = Potw;

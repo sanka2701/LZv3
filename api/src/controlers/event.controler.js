@@ -1,18 +1,16 @@
-const express = require('express');
 const crypto = require("crypto");
-const fs = require('fs');
 const formidable = require('formidable');
-const authe = require('../middleware/authentication');
-const autho = require('../middleware/authorization');
 const Event = require('../models/Event.model');
-const {ROLES} = require('../utils/constants');
+const { resolveContentFiles } = require('../utils/formContent');
+const RequestProcessingError = require('../error/definition');
 
-const router = express.Router();
+const { SERVER_URL_PLACEHOLDER } = require('../utils/constants');
 
+//todo: this could be unified with processing of the Potw
 const processIncomingForm = (request) => {
     return new Promise((resolve, reject) => {
         var formData = {
-            files: {}
+            contentFiles: []
         };
         new formidable.IncomingForm().parse(request)
             .on('field', (name, value) => {
@@ -24,63 +22,107 @@ const processIncomingForm = (request) => {
                 file.name = `${hashName}.${extension}`;
                 file.path = `${process.env.UPLOADS_DIR}/${file.name}`;
             })
-            .on('file', (key, file) => {
-                const { path, name } = file;
-                formData.files[key] = { path, name };
+            .on('file', (key, { name, path }) => {
+                const image = { name, path, pattern: key, };
+                key === 'thumbnail'
+                    ? formData.thumbnailFile = image
+                    : formData.contentFiles.push(image)
             })
             .on('error', (error) => {
                 reject(error)
             })
             .on('end', () => {
-                resolve(formData)
+                formData.contentFiles.forEach(file => {
+                    let url = `${SERVER_URL_PLACEHOLDER}/${file.name}`;
+                    formData.content = formData.content.replace(file.pattern, url);
+                    file.pattern = url;
+                });
+
+                resolve({
+                    id: request.params.id,
+                    ownerId: request.user.id,
+                    ...formData
+                })
             });
     });
 };
 
-router.post('/events', authe, autho(ROLES.ADMIN), (request, response) => {
-    processIncomingForm(request)
-        .then((formData) => {
-            let payload = { ...formData, ownerId: request.user.id };
-            // Event.create( payload )
-            //     .then((potw) => {
-            //         response.status(201).send({ photos: [potw] });
-            //     })
-            //     .catch((error) => {
-            //         //todo: delete just uploaded file
-            //         response.status(400).send({ error });
-            //     });
-            response.status(201).send();
-        })
-        .catch((error) => {
-            response.status(500).send({error});
-        })
-});
+// todo: this can be unified with other contreolers attachUpdateData functions - just add a key under which the data should ba paased on
+const attachUpdateData = fetchEvent => ( updateData ) => {
+    return new Promise( (resolve, reject) => {
+        fetchEvent({ id: updateData.id })
+            .then(
+                event => resolve({ event, updateData }),
+                error => reject(new Error(error.message))
+            )
+    })
+};
 
-router.get('/events', (request, response) => {
-    Event.find()
-        .then(events => {
-            response.status(200).send({ photos: events });
-        })
-        .catch( error => {
-            response.status(400).send({error});
-        });
-});
+const fetchEvent = ({ id }) => {
+    return new Promise( (resolve, reject) => {
+        Event.findById( id )
+            .populate('thumbnailFile')
+            .populate('contentFiles')
+            .orFail(() => {
+                let error = new RequestProcessingError(
+                    `Event with id ${id} does not exists`,
+                    404
+                );
+                reject(error);
+            })
+            .exec((error, event ) => {
+                !!error
+                    ? reject(new RequestProcessingError(error.message, 400))
+                    : resolve( event )
+            })
+    });
+};
 
-router.get('/events/:id', async (request, response) => {
-    const { id } = request.params;
-    Event.findOne({ _id: id })
-        .orFail(() => {
-            throw new Error (`Event with id ${id} does not exists`);
-        })
-        .exec()
-        .then( photo => {
-            response.status(200).send({ photos : [ photo ] });
-        })
-        .catch( error => {
-            response.status(400).send(error);
-        });
-});
+// const fetchEvent = (updateData) => {
+//     return new Promise( (resolve, reject) => {
+//         Event.findById( updateData.id )
+//             .populate('thumbnailFile')
+//             .populate('contentFiles')
+//             .orFail(() => {
+//                 let error = new RequestProcessingError(
+//                     `Event with id ${updateData.id} does not exists`,
+//                     404
+//                 );
+//                 reject(error);
+//             })
+//             .exec((error, event ) => {
+//                 !!error
+//                     ? reject(new RequestProcessingError(error.message, 400))
+//                     : resolve({ event, updateData })
+//             })
+//     });
+// };
 
-//todo: delete
+const getTags = ({ tags, ...data }) => {
+    const array = tags.split(',');
+    return { tags: array, ...data }
+};
 
-module.exports = router;
+const fetchAll = () => {
+    return Event.find()
+        .populate('thumbnailFile')
+        .populate('contentFiles')
+};
+
+const updateEvent = ({event, updateData}) => {
+    updateData.contentFiles = resolveContentFiles(updateData.content, updateData.contentFiles, event.contentFiles);
+    Object.assign(event, updateData);
+    return event
+};
+
+const saveEvent = (data) => {
+    return Event.create( data )
+};
+
+const deleteEvent= ({ event }) => {
+    return event.remove()
+};
+
+module.exports = {
+    processIncomingForm, getTags, fetchEvent, fetchAll, updateEvent, saveEvent, deleteEvent, attachUpdateData
+};

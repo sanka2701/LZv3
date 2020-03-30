@@ -1,53 +1,50 @@
-const express = require('express');
-const authe = require('../middleware/authentication');
-const autho = require('../middleware/authorization');
-const {ROLES} = require('../utils/constants');
 const Place = require('../models/Place.model');
+const RequestProcessingError = require('../error/definition');
 
-const router = express.Router();
+const getRequestData = ( request ) => {
+    return new Promise(( resolve, reject) => {
+        let data = {
+            id: request.params.id,
+            ...request.body
+        };
+        if(request.user) {
+            data.ownerId = request.user.id
+        }
 
-router.post('/places', authe, autho(ROLES.USER), async (req, res) => {
-    try {
-        let payload = { ...req.body, ownerId: req.user.id };
-        const place = new Place(payload);
-        await place.save();
-        res.status(201).send({ places: [place] })
-    } catch (error) {
-        res.status(400).send(error)
-    }
-});
-
-router.put('/places/:id', authe, autho(ROLES.USER), async (req, res) => {
-    try {
-        const { id } = req.params;
-        const place = await Place.findOneAndUpdate({_id: id}, req.body, {new: true});
-        res.status(201).send({ places: [place] });
-    } catch (error) {
-        res.status(400).send(error)
-    }
-});
-
-router.delete('/places/:id', authe, autho(ROLES.ADMIN), (req, res) => {
-    const { id } = req.params;
-    Place.findOneAndDelete({ _id : id }).then(() => {
-        // res.redirect('/places');
-        res.status(200).send();
+        resolve( data )
     })
-});
+};
 
-router.get('/places', async (req, res) => {
-    const places = await Place.find();
-    res.json({ places });
-});
+const fetchPlace = ({ id }) => {
+    return new Promise( (resolve, reject) => {
+        Place.findById(id)
+            .orFail(() => {
+                reject(new RequestProcessingError(`Place with id ${id} does not exists`, 404))
+            })
+            .exec((error, place ) => {
+                !!error
+                    ? reject(new RequestProcessingError(`Place with id ${id} does not exists`, 404))
+                    : resolve( place )
+            })
+    })
+};
 
-router.get('/places/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const place = await Place.findOne({_id: id});
-        res.status(201).send({ places: [place] });
-    } catch (error) {
-        res.status(500).send(error)
-    }
-});
+const fetchAllPlaces = () => {
+    return Place.find()
+};
 
-module.exports = router;
+const updatePlace = (  updateData ) => {
+    return Place.findOneAndUpdate({_id: updateData.id}, updateData, {new: true});
+};
+
+const savePlace = ( data ) => {
+    return Place.create( data )
+};
+
+const deletePlace= ( place ) => {
+    return place.remove()
+};
+
+module.exports = {
+    getRequestData, fetchPlace, fetchAllPlaces, updatePlace, savePlace, deletePlace
+};

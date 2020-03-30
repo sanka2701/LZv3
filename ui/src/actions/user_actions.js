@@ -3,17 +3,20 @@ import {
     AUTH_ERROR,
     AUTH_USER,
     AUTH_USER_OUT,
-    GET_USERS_FAILURE,
     GET_USERS_REQUEST,
-    GET_USERS_SUCCESS, SET_NOTIFICATION,
-    SET_USERS_FILTER, UPDATE_USERS_FAILURE, UPDATE_USERS_SUCCESS
+    GET_USERS_SUCCESS,
+    GET_USERS_FAILURE,
+    SET_NOTIFICATION,
+    SET_USERS_FILTER,
+    UPDATE_USERS_FAILURE,
+    UPDATE_USERS_SUCCESS
 } from "./types";
-import {get, post} from "./index";
+import { get, post, put } from "./index";
 
 export const registerUser = (registerParam, callback) => dispatch => {
     dispatch(requestUsers());
     const request = {
-        endpoint: 'users',
+        endpoint: `users`,
         payload: registerParam,
         successAction: AUTH_USER,
         failureAction: AUTH_ERROR,
@@ -27,7 +30,7 @@ export const registerUser = (registerParam, callback) => dispatch => {
 export const loginUser = (credentials, callback) => dispatch => {
     dispatch(requestUsers());
     const request = {
-        endpoint: 'users/login',
+        endpoint: `users/login`,
         payload: credentials,
         successAction: AUTH_USER,
         failureAction: AUTH_ERROR,
@@ -36,6 +39,17 @@ export const loginUser = (credentials, callback) => dispatch => {
         }
     };
     dispatch(post(request));
+};
+
+export const loginByToken = () => dispatch => {
+    // token is attached by axios interceptor
+    dispatch(requestUsers());
+    const request = {
+        endpoint: `users/me`,
+        successAction: AUTH_USER,
+        failureAction: AUTH_ERROR
+    };
+    dispatch(get(request));
 };
 
 export const logoutUser = () => {
@@ -57,15 +71,11 @@ export const requestUsers = () => {
     }
 };
 
-export const postUser = () => {
-    //todo
-};
-
 export const updateUser = (user, callback) => dispatch => {
 	//todo: success and failure actions are emitted but not yet processed in reducer
     dispatch(requestUsers());
     const request = {
-        endpoint: 'users/update',
+        endpoint: `users/${user.id}`,
         payload: user,
         successAction: UPDATE_USERS_SUCCESS,
         failureAction: UPDATE_USERS_FAILURE
@@ -81,7 +91,7 @@ export const updateUser = (user, callback) => dispatch => {
         callback && callback();
     };
 
-    dispatch(post(request));
+    dispatch(put(request));
 };
 
 export const loadUsers = () => dispatch => {
@@ -96,8 +106,7 @@ export const loadUsers = () => dispatch => {
 
 export const loadUserById = id => dispatch => {
     const request = {
-        endpoint: 'users/id',
-        params: { id },
+        endpoint: `users/${id}`,
         successAction: GET_USERS_SUCCESS,
         failureAction: GET_USERS_FAILURE
     };

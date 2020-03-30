@@ -39,7 +39,6 @@ class EventTop extends React.Component {
 	componentWillUpdate(nextProps, nextState, nextContext) {
 		//todo: try to leverage from this loop instead of onInvalidateEvents to avoid passing down the function to filter
 		//  add didInvalidate property from places and events reducers and check for its change
-		debugger;
 	}
 
 	onPaginationChange(pageIndex) {
@@ -83,8 +82,8 @@ const mapStateToProps = (state) => {
 	return {
 		isLoading: loadingSelector(state),
 		events: currentPageEventsSelector(state),
-    pageCount: eventsPageCountSelector(state),
-    currentPage: state.events.currentPage,
+    	pageCount: eventsPageCountSelector(state),
+    	currentPage: state.events.currentPage,
 	}
 };
 

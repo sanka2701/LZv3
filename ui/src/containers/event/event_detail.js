@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { compose } from 'redux';
-import { loadEventById, loadPlaceById, updateEvent } from '../../actions';
+import {deleteEvent, loadEventById, loadPlaceById, updateEvent} from '../../actions';
 import { Row, Col } from 'reactstrap';
 import PostImage from '../../components/post/post_image';
 import PostContextMenu from '../../components/ui/menu/post_context_menu';
@@ -24,6 +24,13 @@ class EventDetail extends React.Component {
         this.onEdit = this.onEdit.bind(this);
         this.onApprove = this.onApprove.bind(this);
     }
+
+    onDelete = () => {
+        const { event: { id }, deleteEvent } = this.props;
+        deleteEvent(id, () => {
+            this.props.history.push('/events/')
+        })
+    };
 
     onEdit = () => {
         const { event, place } = this.props;
@@ -61,6 +68,7 @@ class EventDetail extends React.Component {
                     <PostContextMenu
                         onEdit={this.onEdit}
                         onApprove={!event.approved ? this.onApprove : null}
+                        onDelete={this.onDelete}
                     />
                 )}
 
@@ -96,5 +104,5 @@ const mapStateToProps = ({ events, places, auth }, ownProps) => {
 };
 
 export default compose(
-    connect(mapStateToProps, { loadEventById, loadPlaceById, updateEvent })
+    connect(mapStateToProps, { loadEventById, loadPlaceById, updateEvent , deleteEvent })
 )(EventDetail);

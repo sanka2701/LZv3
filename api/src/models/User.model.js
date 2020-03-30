@@ -1,13 +1,15 @@
 const mongoose = require("mongoose");
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const RequestProcessingError = require('../error/definition');
 
 const {ROLES} = require('../utils/constants');
 
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   password: {
     type: String,
@@ -32,31 +34,32 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-userSchema.pre('save', async function (next) {
+userSchema.pre('save', function (next) {
     // Hash the password before saving the user model
     const user = this;
     if (user.isModified('password')) {
-        user.password = await bcrypt.hash(user.password, 8)
+        bcrypt.hash(user.password, 8, function(error, hash) {
+            error && next( error );
+            user.password = hash;
+            next();
+        })
+    } else {
+        next();
     }
-    next()
 });
 
-userSchema.methods.generateAuthToken = async function() {
-    // Generate an auth token for the user
+userSchema.methods.generateAuthToken = function() {
     const user = this;
-    const token = jwt.sign({_id: user._id}, process.env.JWT_KEY);
-    await user.save();
-    return token
+    return jwt.sign({_id: user._id}, process.env.JWT_KEY);
 };
 
-userSchema.statics.findByCredentials = async (username, password) => {
-    // Search for a user by email and password.
+userSchema.statics.findByCredentials = async ({ username, password }) => {
     const user = await User.findOne({ username} ).orFail(() => {
-        throw new Error({ error: 'Invalid username' })
+        throw new RequestProcessingError('Invalid username', 400)
     });
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
-        throw new Error({ error: 'Invalid password' })
+        throw new RequestProcessingError('Invalid password', 400)
     }
     return user
 };

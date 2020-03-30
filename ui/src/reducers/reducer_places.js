@@ -11,7 +11,7 @@ import {
     INVALIDATE_PLACES,
     DELETE_PLACES_FAILURE, DELETE_PLACES_SUCCESS
 } from "../actions/types";
-import { mapKeys, map } from 'lodash';
+import {mapKeys, map, difference, omit } from 'lodash';
 import { LM_GPS_COORDS } from "../utils/constant";
 import {produce} from "immer";
 
@@ -47,16 +47,21 @@ export default function (state = defaultState, action) {
                 draftState.ids  = state.ids.concat(map(places, 'id')),
                 draftState.isLoading = false
              });
+
         case GET_PLACES_SUCCESS:
           return produce(state, draftState => {
               draftState.byId = mapKeys(places, 'id'),
               draftState.ids = map(places, 'id'),
               draftState.isLoading = false
           });
+
         case DELETE_PLACES_SUCCESS:
-            //todo: two options to do :
-            //  a) pass deleted id from backend and remove from store
-            //  b) do nothing and just reload all places after redirect to /places
+            return produce(state, draftState => {
+                let ids = map(places, 'id');
+                draftState.byId = omit(draftState.byId, ids);
+                draftState.ids  = difference(draftState.ids, ids);
+                draftState.isLoading= false;
+            });
 
         case DELETE_PLACES_FAILURE:
         case POST_PLACE_FAILURE:

@@ -21,6 +21,10 @@ export const postToFormData = async ({ thumbnail, ...post }, type) => {
 	const processor = new HtmlContentPostprocess();
 	const files = await processor.getContentFiles(post.content);
 
+	// host url needs to be replaced back to placeholder
+	const regex = new RegExp("\\" + `${ROOT_URL}`, 'gm');
+	post.content = post.content.replace(regex, SERVER_URL_PLACEHOLDER);
+
 	const formData = new FormData();
 	forEach(post, (value, key) => formData.append(key, value));
 	forEach(files, ( file, url ) => formData.append(url, file));
