@@ -10,7 +10,7 @@ const PostContent = ({content}) => (
     <div className={styles.content}>
         <div
             className={'__lz_ck_content__'}
-            dangerouslySetInnerHTML={content}
+            dangerouslySetInnerHTML={{__html: content}}
             // dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(content)}}
         />
     </div>
