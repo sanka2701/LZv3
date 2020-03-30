@@ -44,6 +44,8 @@ const normalizeTime = millis => {
 };
 
 const normalizeEventObject = event => {
+	event.startDate = new Date(event.startDate);
+	event.endDate = new Date(event.endDate);
 	event.startTime = normalizeTime(event.startTime);
 	event.endTime = normalizeTime(event.endTime);
 	event.thumbnail = replaceServerUrlPlaceholder(event.thumbnail);

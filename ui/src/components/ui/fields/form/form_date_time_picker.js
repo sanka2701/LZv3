@@ -9,16 +9,18 @@ import moment from 'moment'
 
 momentLocaliser(moment);
 
-const BasicDateTimePicker = ({ onChange, onBlur, value, ...props}) => (
-    <DateTimePicker
+const BasicDateTimePicker = ({ /*onChange,*/ value, onBlur, ...props}) => {
+    console.debug('BasicDateTimePicker - incoming value:', value);
+    console.debug('BasicDateTimePicker - typeof value',typeof value);
+
+    return (<DateTimePicker
         {...props}
-        onChange={(val) => { val && onChange(val.getTime())}}
         onBlur={() => onBlur(value)}
         format="DD MMM YYYY"
         time={false}
-        value={!value ? null : new Date(value)}
+        value={value}
     />
-);
+)};
 
 const FormDateTimePicker = compose(
     withLabel,

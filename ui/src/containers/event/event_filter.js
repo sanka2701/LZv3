@@ -117,6 +117,7 @@ class EventFilter extends React.Component {
 						</Col>
 					</Row>
 					<Collapse isOpen={this.state.isMapShown}>
+						//fixme: pass on markers here -> places of events which are shown
 						<PlaceFilter onPlaceFilterChanged={this.placeFilterChanged} filter={filter.place}/>
 					</Collapse>
 				</Collapse>
@@ -125,9 +126,10 @@ class EventFilter extends React.Component {
 	}
 }
 
-const mapStateToProps = ({events: {filter}, tags}) => {
+const mapStateToProps = ({events, tags, places}) => {
+
 	return {
-		filter,
+		filter: events.filter,
 		tags: _.values(tags.byId),
 	}
 };

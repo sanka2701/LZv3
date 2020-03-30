@@ -199,10 +199,10 @@ class GoogleMap extends React.Component {
   destructureParamMarker(marker) {
     const { position, ...markerProps } = marker;
     return {
+      ...markerProps,
       id: this.getMarkerId(position),
       type: ITEM_TYPE.MARKER,
       position,
-      ...markerProps
     }
   }
 
