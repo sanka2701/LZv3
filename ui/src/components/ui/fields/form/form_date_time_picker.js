@@ -10,6 +10,8 @@ import moment from 'moment'
 momentLocaliser(moment);
 
 const BasicDateTimePicker = ({ /*onChange,*/ value, onBlur, ...props}) => {
+    value = value || null;
+
     console.debug('BasicDateTimePicker - incoming value:', value);
     console.debug('BasicDateTimePicker - typeof value',typeof value);
 

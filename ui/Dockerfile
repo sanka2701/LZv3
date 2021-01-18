@@ -1,26 +1,12 @@
-##DEV
-#FROM node:11
-## Create app directory
-#WORKDIR /usr/src/app
-## Install app dependencies
-#COPY package*.json ./
-#
-##RUN npm install --silent
-#RUN npm install
-## Copy app source code
-#COPY . .
-#
-##Expose port and start application
-#EXPOSE 3000
-#CMD ["npm", "start"]
-
 # build environment
-FROM node:12.2.0-alpine as build
+#FROM node:12.2.0-alpine as build
+FROM timbru31/node-alpine-git as build
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json /app/package.json
-RUN npm install --silent
-RUN npm install react-scripts@3.0.1 -g --silent
+#RUN npm install --save-dev https://github.com/codebandits/react-app-rewire-css-modules
+RUN npm install
+RUN npm install react-scripts@3.0.1 -g
 COPY . /app
 RUN npm run build
 

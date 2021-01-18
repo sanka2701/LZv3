@@ -1,5 +1,5 @@
 {
-  "name": "test-mongo-app",
+  "name": "lz_backend",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",

@@ -1,17 +1,22 @@
 version: '2'
 services:
   ui:
-    build: ui
+    build: ./ui
     ports:
       - '80:80'
     depends_on:
       - api
   api:
-    build: api
+    container_name: api_prod
+    build: ./api
     ports:
       - '8080:8080'
+    volumes:
+      - ./uploads:/usr/uploads/
     environment:
+      - UPLOADS_DIR=/usr/uploads
       - MONGO_URL=mongodb://mongo:27017/liptov-zije
+      - JWT_KEY=mykye1
     depends_on:
       - mongo
   mongo:

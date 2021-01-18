@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {
     GET_PLACES_SUCCESS,
     GET_PLACES_FAILURE,

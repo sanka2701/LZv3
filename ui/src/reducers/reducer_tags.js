@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { mapKeys, map } from 'lodash';
 import {
 	GET_TAGS_SUCCESS,
