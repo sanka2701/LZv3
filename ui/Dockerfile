@@ -1,13 +1,13 @@
 # build environment
-#FROM node:12.2.0-alpine as build
 FROM timbru31/node-alpine-git as build
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json /app/package.json
-#RUN npm install --save-dev https://github.com/codebandits/react-app-rewire-css-modules
 RUN npm install
 RUN npm install react-scripts@3.0.1 -g
 COPY . /app
+ARG REACT_APP_BACKEND_ENDPOINT
+ENV REACT_APP_BACKEND_ENDPOINT $REACT_APP_BACKEND_ENDPOINT
 RUN npm run build
 
 # production environment

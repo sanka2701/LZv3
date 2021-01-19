@@ -1,11 +1,15 @@
 version: '2'
 services:
   ui:
-    build: ./ui
+    container_name: ui_prod
+    build:
+      context: ./ui
+      args:
+        - REACT_APP_BACKEND_ENDPOINT=http://89.221.222.30:8080
     ports:
       - '80:80'
-    environment:
-      - REACT_APP_BACKEND_ENDPOINT=http://89.221.222.30:8080
+#    environment:
+#      - REACT_APP_BACKEND_ENDPOINT=http://89.221.222.30:8080
     depends_on:
       - api
   api:
@@ -22,6 +26,7 @@ services:
     depends_on:
       - mongo
   mongo:
+    container_name: mongo_prod
     image: mongo
     ports:
       - '27017:27017'
