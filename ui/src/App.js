@@ -8,9 +8,11 @@ import ModalExample from "./containers/error/modal";
 import TopLogo from './components/header/logo/top_logo';
 import Notification from "./containers/app/notification";
 import {loginByToken} from "./actions";
+import {ROOT_URL} from "./utils/constant";
 
 class App extends Component {
 	componentDidMount() {
+		console.log('ROOT URL', ROOT_URL)
 		if (localStorage.getItem('token')) {
 			this.props.loginByToken()
 		}
