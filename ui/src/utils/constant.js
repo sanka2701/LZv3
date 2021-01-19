@@ -1,6 +1,6 @@
 export const GOOGLE_API_KEY='AIzaSyD9EfpZU1-IlW1RQbgYzYyVqCqMhV66_HU';
 export const SERVER_URL_PLACEHOLDER = '@LZ_SERVER_URL@';
-export const ROOT_URL = 'http://localhost:8080';
+export const ROOT_URL = process.env.REACT_APP_BACKEND_ENDPOINT || 'http://localhost:8080';
 // export const ROOT_URL = 'https://peaceful-lowlands-11080.herokuapp.com';
 export const GOOGLE_URL = 'https://maps.googleapis.com/maps/api/place/details/json';
 export const INPUT_SEARCH_DELAY =  270;

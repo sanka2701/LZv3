@@ -3,7 +3,7 @@ services:
   ui:
     build: ./ui
     ports:
-      - '80:80'
+      - '8084:80'
     depends_on:
       - api
   api:
@@ -16,10 +16,11 @@ services:
     environment:
       - UPLOADS_DIR=/usr/uploads
       - MONGO_URL=mongodb://mongo:27017/liptov-zije
+      - REACT_APP_BACKEND_ENDPOINT=http://89.221.222.30:8080
       - JWT_KEY=mykye1
     depends_on:
       - mongo
   mongo:
     image: mongo
     ports:
-      - '2717:27017'
+      - '27017:27017'
