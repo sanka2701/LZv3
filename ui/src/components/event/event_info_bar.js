@@ -11,16 +11,15 @@ export default class EventInfoBar extends React.Component {
     constructor(props) {
         super(props);
         this.toggle = this.toggle.bind(this);
-        this.state = { collapse: false };
+        this.state = { isCollapsed: false };
     }
 
     toggle() {
-        this.setState({ collapse: !this.state.collapse });
+        this.setState({ isCollapsed: !this.state.isCollapsed });
     }
 
     render() {
         const { event } = this.props;
-        const startDate = new Date(event.startDate);
 
         return (
             <div className={'event-info-bar'}>
@@ -30,7 +29,7 @@ export default class EventInfoBar extends React.Component {
                             <FaCalendar size={32}/>
                         </Label>
                         <Label>
-                            {`${startDate.getDay()}.${startDate.getMonth()}.${startDate.getFullYear()}`}
+                            {event.startDate.toLocaleDateString('sk-SK')}
                         </Label>
                     </Col>
                     <Col sm='4'>
@@ -43,7 +42,11 @@ export default class EventInfoBar extends React.Component {
                     </Col>
                     <Col sm='4'>
                         <Button color="primary" onClick={this.toggle}>
-                            <FormattedMessage id='event.showMap' defaultMessage='Show Map'/>
+                            {
+                                this.state.isCollapsed
+                                ? <FormattedMessage id='event.hideMap' defaultMessage='Hide Map'/>
+                                : <FormattedMessage id='event.showMap' defaultMessage='Show Map'/>
+                            }
                         </Button>
                     </Col>
                 </Row>
@@ -56,7 +59,7 @@ export default class EventInfoBar extends React.Component {
 
                 <Row>
                     <Col>
-                        <Collapse isOpen={this.state.collapse}>
+                        <Collapse isOpen={this.state.isCollapsed}>
                             <MapDisplay selectedPlace={this.props.place}/>
                         </Collapse>
                     </Col>

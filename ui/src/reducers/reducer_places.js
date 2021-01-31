@@ -17,7 +17,7 @@ import { LM_GPS_COORDS } from "../utils/constant";
 import {produce} from "immer";
 
 const defaultFilter = {
-	isSet: false,
+  isSet: false,
   center: null,
   radius: 2000,
 };

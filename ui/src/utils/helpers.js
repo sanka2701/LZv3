@@ -75,10 +75,12 @@ export const areCoordinatesValid = (coords) => {
 
 export const timeToMilliseconds = (hours, minutes) => (minutes * 60000 + hours * 3600000);
 
-export const millisecondsToTime = (millis) => {
-    const hours = Math.floor(millis / 3600000);
-    const minutes = (millis % 3600000) / 60000;
-    return hours + ':' + minutes;
+export const millisecondsToTime = (ms) => {
+	return new Date(Number(ms)).toISOString().slice(11, 16)
+
+    // const hours = Math.floor(ms / 3600000);
+    // const minutes = (ms % 3600000) / 60000;
+    // return hours + ':' + minutes;
 };
 
 export const postWithResult = async (request) => {

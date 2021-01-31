@@ -6,8 +6,9 @@ import {resetEventFilter, setEventFilter, loadTags} from "../../actions";
 import PlaceFilter from "../../components/place/place_filter";
 import {DateTimePicker, Multiselect} from "react-widgets";
 import {FormattedMessage} from "react-intl";
-import _ from 'lodash';
+import {values} from 'lodash';
 import FilterMenu from "../../components/ui/menu/filter_menu";
+import { placesOfFilteredEventsSelector } from "../../filters/events_selector";
 
 class EventFilter extends React.Component {
 	constructor(props) {
@@ -54,7 +55,7 @@ class EventFilter extends React.Component {
 	};
 
 	render() {
-		const {filter, tags, onInvalidate} = this.props;
+		const {filter, tags, places, onInvalidate} = this.props;
 
 		return (
 			<BorderCol sm={12}>
@@ -117,8 +118,11 @@ class EventFilter extends React.Component {
 						</Col>
 					</Row>
 					<Collapse isOpen={this.state.isMapShown}>
-						//fixme: pass on markers here -> places of events which are shown
-						<PlaceFilter onPlaceFilterChanged={this.placeFilterChanged} filter={filter.place}/>
+						<PlaceFilter
+							onPlaceFilterChanged={this.placeFilterChanged}
+							filter={filter.place}
+							markers={places}
+						/>
 					</Collapse>
 				</Collapse>
 			</BorderCol>
@@ -126,11 +130,11 @@ class EventFilter extends React.Component {
 	}
 }
 
-const mapStateToProps = ({events, tags, places}) => {
-
+const mapStateToProps = (state) => {
 	return {
-		filter: events.filter,
-		tags: _.values(tags.byId),
+		filter: state.events.filter,
+		tags: values(state.tags.byId),
+		places: placesOfFilteredEventsSelector(state)
 	}
 };
 

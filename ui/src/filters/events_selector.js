@@ -35,23 +35,25 @@ export const filteredEventsSelector = createSelector(
 	(events, filter, places ) => {
 		return ( events && Object.keys(places).length )
 			? events.filter(event => {
-				const {place} = filter;
 				const {lat, lon} = places[event.placeId];
 
 				let fits = true;
+				// event is tagged with at least one tag selected on filter
 				fits = fits && (
 					filter.tags.length > 0
-						? event.tags.some(tag => map(filter.tags, 'id').includes(tag.id))
+						? event.tags.some(tagId => map(filter.tags, 'id').includes(tagId))
 						: true
 				);
+				// event is with filtered date range
 				fits = fits && (
 					filter.startDate || filter.endDate
 						? dateRangeOverlap(event.startDate, event.endDate, filter.startDate, filter.endDate)
 						: true
 				);
+				// event is within filtered area
 				fits = fits && (
-					place.center && place.radius
-						? isPointWithinCircle(place.center, place.radius, {lat, lon})
+					filter.place.center && filter.place.radius
+						? isPointWithinCircle(filter.place.center, filter.place.radius, {lat, lon})
 						: true
 				);
 
@@ -62,11 +64,21 @@ export const filteredEventsSelector = createSelector(
 );
 
 export const currentPageEventsSelector = createSelector(
-	[makeEventsSelectorByApproval(true), getCurrentPage],
-	// fixme: filtering is not working
-	// [filteredEventsSelector, getCurrentPage],
+	[filteredEventsSelector, getCurrentPage],
 	(approvedEvents, currentPage) => {
 		const arr = chunk(approvedEvents, POSTS_PER_PAGE);
 		return arr[currentPage - 1]
+	}
+);
+
+export const placesOfFilteredEventsSelector = createSelector(
+	[currentPageEventsSelector, getPlaces],
+	(filteredEvents, places) => {
+		if(filteredEvents && places) {
+			var eventPlacesIds = filteredEvents.map(event => event.placeId);
+			return Object.values(places).filter(place => eventPlacesIds.includes(place.id))
+		} else {
+			return []
+		}
 	}
 );

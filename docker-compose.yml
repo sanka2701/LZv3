@@ -2,18 +2,19 @@ version: '2'
 services:
   ui:
     container_name: ui_prod
+    restart: always
     build:
       context: ./ui
       args:
         - REACT_APP_BACKEND_ENDPOINT=http://89.221.222.30:8080
+#        - http://localhost:8080
     ports:
       - '80:80'
-#    environment:
-#      - REACT_APP_BACKEND_ENDPOINT=http://89.221.222.30:8080
     depends_on:
       - api
   api:
     container_name: api_prod
+    restart: always
     build: ./api
     ports:
       - '8080:8080'
@@ -27,6 +28,9 @@ services:
       - mongo
   mongo:
     container_name: mongo_prod
+    restart: always
     image: mongo
     ports:
       - '27017:27017'
+    volumes:
+      - ./data:/data/db

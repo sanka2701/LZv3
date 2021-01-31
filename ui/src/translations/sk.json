@@ -58,7 +58,8 @@
   "event.endTime" : "Čas konca",
   "event.author" : "Pridal",
   "event.tags": "Kategórie",
-
+  "event.showMap":  "Zobraziť mapu",
+  "event.hideMap":  "Skryť mapu",
   "article.title": "Názov článku",
 
   "place.map": "Mapa",

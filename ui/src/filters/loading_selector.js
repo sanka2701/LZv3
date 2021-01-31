@@ -7,7 +7,6 @@ const isInLoadingState = stateList => {
 	});
 };
 
-//todo: consider changing implementation in way that states of interests will be string names of states and they will be extacted correspondingly from state
 export const makeLoadingSelector = statesOfInterest => createSelector(
 	[ getState ],
 	( state ) => {
